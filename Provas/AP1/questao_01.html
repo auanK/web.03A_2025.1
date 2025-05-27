@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Questão 01</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+
+        .header {
+            background-color: #1abc9c;
+            color: white;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .content {
+            display: flex;
+        }
+
+        .side {
+            flex: 30%;
+            background-color: #f1f1f1;
+            padding: 20px;
+        }
+
+        .side nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .side nav ul li a {
+            display: block;
+            padding: 8px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .main {
+            flex: 70%;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .fake-img {
+            width: 100%;
+            max-width: 300px;
+            height: 150px;
+            background-color: #cccccc;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #aaaaaa;
+            font-style: italic;
+        }
+
+        footer {
+            padding: 20px;
+            background-color: #ddd;
+            text-align: center;
+            font-style: italic;
+        }
+
+        @media screen and (max-width: 400px) {
+            .content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Desenvolvimento de Software WEB</h1>
+    </header>
+    <div class="content">
+        <aside class="side">
+            <h2>Menu Lateral</h2>
+            <nav>
+                <ul>
+                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Link 2</a></li>
+                    <li><a href="#">Link 3</a></li>
+                    <li><a href="#">Link 4</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main">
+            <h2>Conteúdo</h2>
+            <section>
+                <h3>Introdução ao HTML</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores sapiente culpa animi consectetur
+                    obcaecati ex fugit perferendis commodi dolor dolore ut aliquid mollitia deleniti beatae, amet
+                    incidunt impedit voluptas quisquam!</p>
+                <div class="fake-img">imagem.png</div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro incidunt nostrum possimus deleniti
+                    eum, itaque explicabo officia laborum, numquam deserunt suscipit rerum quos, fugit repellendus
+                    perferendis tempore neque quam architecto.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro incidunt nostrum possimus deleniti
+                    eum, itaque explicabo officia laborum, numquam deserunt suscipit rerum quos, fugit repellendus
+                    perferendis tempore neque quam architecto.</p>
+                <div class="fake-img">imagem.png</div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <a href="mailto:fulanodetal@ufc.br">fulanodetal@ufc.br</a>
+        <p>2025.1</p>
+        <p>Todos os direitos reservados</p>
+    </footer>
+</body>
+
+</html>
