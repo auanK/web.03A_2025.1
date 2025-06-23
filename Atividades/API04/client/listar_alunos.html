@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listar Alunos</title>
+  </head>
+  <body>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Curso</th>
+          <th>IRA</th>
+        </tr>
+      </thead>
+      <tbody id="alunos-list"></tbody>
+    </table>
+  </body>
+  <script>
+    async function listarAlunos() {
+      try {
+        const response = await fetch("http://localhost:3000/alunos");
+        const alunos = await response.json();
+        const alunosList = document.getElementById("alunos-list");
+        alunosList.innerHTML = "";
+
+        const maiorIra = Math.max(...alunos.map((a) => a.ira));
+
+        alunos.forEach((aluno) => {
+          const row = document.createElement("tr");
+          if (aluno.ira === maiorIra) {
+            row.style.backgroundColor = "green";
+          }
+          row.innerHTML = `
+                    <td>${aluno.id}</td>
+                    <td>${aluno.nome}</td>
+                    <td>${aluno.curso}</td>
+                    <td>${aluno.ira}</td>
+                `;
+          alunosList.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    }
+
+    listarAlunos();
+  </script>
+</html>
