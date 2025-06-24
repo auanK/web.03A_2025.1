@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Alunos</title>
+</head>
+<body>
+    <form onsubmit="criarAluno(event)">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required>
+
+        <label for="curso">Curso:</label>
+        <input type="text" id="curso" required>
+
+        <label for="ira">IRA:</label>
+        <input type="number" id="ira" step="0.01" required>
+
+        <button type="submit">Criar Aluno</button>
+    </form>
+
+    <script>
+        async function criarAluno(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById("nome").value;
+            const curso = document.getElementById("curso").value;
+            const ira = parseFloat(document.getElementById("ira").value);
+
+            try {
+                const response = await fetch("http://localhost:3000/alunos/criar", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ nome, curso, ira }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erro ao criar aluno");
+                }
+
+                const result = await response.json();
+                console.log(result);
+                alert("Aluno criado com sucesso!");
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao criar aluno");
+            }
+        }
+    </script>
+</body>
+</html>

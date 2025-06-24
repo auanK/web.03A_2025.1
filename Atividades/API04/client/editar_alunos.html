@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Editar Aluno</title>
+</head>
+<body>
+    <h1>Editar Aluno</h1>
+
+    <form onsubmit="atualizarAluno(event)">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required />
+
+        <label for="curso">Curso:</label>
+        <input type="text" id="curso" required />
+
+        <label for="ira">IRA:</label>
+        <input type="number" id="ira" step="0.01" required />
+
+        <button type="submit">Atualizar Aluno</button>
+    </form>
+
+    <script>
+        async function atualizarAluno(event) {
+            event.preventDefault();
+
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+
+            const nome = document.getElementById("nome").value;
+            const curso = document.getElementById("curso").value;
+            const ira = parseFloat(document.getElementById("ira").value);
+
+            try {
+                const response = await fetch(`http://localhost:3000/alunos/editar/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ nome, curso, ira }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erro ao atualizar aluno");
+                }
+
+                const result = await response.json();
+                console.log(result);
+                alert("Aluno atualizado com sucesso!");
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao atualizar aluno");
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -13,6 +13,7 @@
           <th>Nome</th>
           <th>Curso</th>
           <th>IRA</th>
+          <th>Apagar</th>
         </tr>
       </thead>
       <tbody id="alunos-list"></tbody>
@@ -21,7 +22,7 @@
   <script>
     async function listarAlunos() {
       try {
-        const response = await fetch("http://localhost:3000/alunos");
+        const response = await fetch("http://localhost:3000/alunos/listar");
         const alunos = await response.json();
         const alunosList = document.getElementById("alunos-list");
         alunosList.innerHTML = "";
@@ -38,6 +39,9 @@
                     <td>${aluno.nome}</td>
                     <td>${aluno.curso}</td>
                     <td>${aluno.ira}</td>
+                    <td>
+                      <button onclick="apagarAluno(${aluno.id})">Apagar</button>
+                    </td>
                 `;
           alunosList.appendChild(row);
         });
@@ -46,6 +50,20 @@
       }
     }
 
-    listarAlunos();
+
+    async function apagarAluno(id) {
+      try {
+      const response = await fetch(`http://localhost:3000/alunos/apagar/${id}`, {
+      method: "DELETE",
+      });
+      const resultado = await response.json();
+      console.log(resultado);
+      listarAlunos();
+    } catch (error) {
+      console.error("Erro ao apagar aluno:", error);
+    }
+}
+
+      listarAlunos();
   </script>
 </html>
