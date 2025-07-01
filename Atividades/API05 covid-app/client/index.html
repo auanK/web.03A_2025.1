@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Covid - Estados do Brasil</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 30px;
+      }
+      .destaque-fatalidade {
+        background-color: #ffefef;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Painel COVID-19 - Estados do Brasil</h1>
+    <p><a href="/paises.html">Ver dados por Países</a></p>
+
+    <div id="tabela-container"></div>
+
+    <div id="sumario-container"></div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        carregarDadosEstados();
+      });
+
+      async function carregarDadosEstados() {
+        try {
+          const response = await fetch("/api/estados");
+          const estados = await response.json();
+
+          if (!estados || estados.length === 0) {
+            throw new Error("Não foi possível carregar os dados.");
+          }
+
+          const totalCasos = estados.reduce((acc, est) => acc + est.cases, 0);
+          const totalSuspeitos = estados.reduce(
+            (acc, est) => acc + est.suspects,
+            0
+          );
+          const totalFalecimentos = estados.reduce(
+            (acc, est) => acc + est.deaths,
+            0
+          );
+          const mediaFalecimentos = totalFalecimentos / estados.length;
+          const mediaCasos = totalCasos / estados.length;
+          const mediaSuspeitos = totalSuspeitos / estados.length;
+
+          let estadoMaiorRelacao = { state: "N/A", relacao: 0 };
+          let estadoMenorRelacao = { state: "N/A", relacao: Infinity };
+
+          estados.forEach((estado) => {
+            if (estado.deaths > 0) {
+              const relacao = estado.cases / estado.deaths;
+              if (relacao > estadoMaiorRelacao.relacao) {
+                estadoMaiorRelacao = { state: estado.state, relacao: relacao };
+              }
+              if (relacao < estadoMenorRelacao.relacao) {
+                estadoMenorRelacao = { state: estado.state, relacao: relacao };
+              }
+            }
+          });
+
+          let tabelaHtml = `
+                    <table border="1" style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Nome do Estado</th>
+                                <th>Abreviação</th>
+                                <th>Nº de Casos</th>
+                                <th>Nº de Suspeitos</th>
+                                <th>Nº de Falecimentos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+          estados.forEach((estado) => {
+            const classeDestaque =
+              estado.deaths > mediaFalecimentos
+                ? 'class="destaque-fatalidade"'
+                : "";
+            tabelaHtml += `
+                        <tr ${classeDestaque}>
+                            <td>${estado.state}</td>
+                            <td>${estado.uf}</td>
+                            <td>${estado.cases.toLocaleString("pt-BR")}</td>
+                            <td>${estado.suspects.toLocaleString("pt-BR")}</td>
+                            <td>${estado.deaths.toLocaleString("pt-BR")}</td>
+                        </tr>
+                    `;
+          });
+          tabelaHtml += `</tbody></table>`;
+
+          const sumarioHtml = `
+                    <hr>
+                    <h2>Análise Geral</h2>
+                    <p><strong>Média de Casos:</strong> ${mediaCasos
+                      .toFixed(0)
+                      .toLocaleString("pt-BR")}</p>
+                    <p><strong>Média de Suspeitos:</strong> ${mediaSuspeitos
+                      .toFixed(0)
+                      .toLocaleString("pt-BR")}</p>
+                    <p><strong>Média de Falecimentos:</strong> ${mediaFalecimentos
+                      .toFixed(0)
+                      .toLocaleString("pt-BR")}</p>
+                    <br>
+                    <p><strong>Estado com MAIOR relação Casos/Falecimentos:</strong> ${
+                      estadoMaiorRelacao.state
+                    } (${estadoMaiorRelacao.relacao.toFixed(
+            2
+          )} casos por morte)</p>
+                    <p><strong>Estado com MENOR relação Casos/Falecimentos:</strong> ${
+                      estadoMenorRelacao.state
+                    } (${estadoMenorRelacao.relacao.toFixed(
+            2
+          )} casos por morte)</p>
+                `;
+
+          document.getElementById("tabela-container").innerHTML = tabelaHtml;
+          document.getElementById("sumario-container").innerHTML = sumarioHtml;
+        } catch (error) {
+          console.error("Falha ao carregar dados no frontend:", error);
+          document.getElementById(
+            "tabela-container"
+          ).innerHTML = `<p><b>Erro ao carregar os dados.</b> Verifique se o servidor está rodando e tente novamente.</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>

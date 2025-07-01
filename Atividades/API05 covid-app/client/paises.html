@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Covid - Países</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 30px;
+      }
+      .destaque-brasil {
+        background-color: #e8f5e9;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Painel COVID-19 - Países</h1>
+    <p><a href="/index.html">Ver dados por Estados do Brasil</a></p>
+
+    <div id="tabela-container"></div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        carregarDadosPaises();
+      });
+
+      async function carregarDadosPaises() {
+        try {
+          const response = await fetch("/api/paises");
+          const paises = await response.json();
+
+          if (!paises || paises.length === 0) {
+            throw new Error("Não foi possível carregar os dados dos países.");
+          }
+
+          let tabelaHtml = `
+                    <table border="1" style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>País</th>
+                                <th>Casos Confirmados</th>
+                                <th>Mortes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+          paises.forEach((pais) => {
+            const classeDestaque =
+              pais.country === "Brazil" ? 'class="destaque-brasil"' : "";
+            tabelaHtml += `
+                        <tr ${classeDestaque}>
+                            <td>${pais.country}</td>
+                            <td>${pais.confirmed.toLocaleString("pt-BR")}</td>
+                            <td>${pais.deaths.toLocaleString("pt-BR")}</td>
+                        </tr>
+                    `;
+          });
+          tabelaHtml += `</tbody></table>`;
+
+          document.getElementById("tabela-container").innerHTML = tabelaHtml;
+        } catch (error) {
+          console.error("Falha ao carregar dados no frontend:", error);
+          document.getElementById(
+            "tabela-container"
+          ).innerHTML = `<p><b>Erro ao carregar os dados.</b> Verifique se o servidor está rodando e tente novamente.</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>
