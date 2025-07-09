@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Segunda Questão</title>
+
+    <style>
+      body {
+        text-align: center;
+        background-color: #f0f0f0;
+      }
+      #game-board {
+        display: grid;
+        grid-template-columns: repeat(4, 100px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .card {
+        width: 100px;
+        height: 100px;
+        border: 2px solid #333;
+        cursor: pointer;
+      }
+      .combinada {
+        border: 3px solid lightgreen;
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Jogo da Memória</h1>
+    <div id="game-board"></div>
+
+    <script>
+      const gameBoard = document.getElementById("game-board");
+
+      const nomesDasImagens = [
+        "gato",
+        "cachorro",
+        "passaro",
+        "peixe",
+        "elefante",
+        "leao",
+        "cobra",
+        "tartaruga",
+      ];
+      const cartasArray = [...nomesDasImagens, ...nomesDasImagens];
+
+      const versoDaCarta = "?";
+
+      let primeiraCartaVirada = null;
+      let segundaCartaVirada = null;
+      let travarCliques = false;
+
+      cartasArray.sort(() => 0.5 - Math.random());
+
+      cartasArray.forEach((nomeDaImagem) => {
+        const carta = document.createElement("div");
+        carta.classList.add("card");
+        carta.dataset.imagem = nomeDaImagem;
+        carta.textContent = versoDaCarta;
+        gameBoard.appendChild(carta);
+        carta.addEventListener("click", aoClicarNaCarta);
+      });
+
+      function aoClicarNaCarta() {
+        if (travarCliques || this === primeiraCartaVirada) {
+          return;
+        }
+
+        this.textContent = this.dataset.imagem;
+        this.style.backgroundColor = "white";
+        if (!primeiraCartaVirada) {
+          primeiraCartaVirada = this;
+        } else {
+          segundaCartaVirada = this;
+          travarCliques = true;
+          checarSeCombinam();
+        }
+      }
+
+      function checarSeCombinam() {
+        const saoIguais =
+          primeiraCartaVirada.dataset.imagem ===
+          segundaCartaVirada.dataset.imagem;
+
+        if (saoIguais) {
+          primeiraCartaVirada.classList.add("combinada");
+          segundaCartaVirada.classList.add("combinada");
+          primeiraCartaVirada.removeEventListener("click", aoClicarNaCarta);
+          segundaCartaVirada.removeEventListener("click", aoClicarNaCarta);
+          resetarJogada();
+        } else {
+          setTimeout(() => {
+            primeiraCartaVirada.textContent = versoDaCarta;
+            segundaCartaVirada.textContent = versoDaCarta;
+            primeiraCartaVirada.style.backgroundColor = "";
+            segundaCartaVirada.style.backgroundColor = "";
+            resetarJogada();
+          }, 1000);
+        }
+      }
+
+      function resetarJogada() {
+        primeiraCartaVirada = null;
+        segundaCartaVirada = null;
+        travarCliques = false;
+      }
+    </script>
+  </body>
+</html>

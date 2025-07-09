@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Primeira Questão</title>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script>
+      function buscarProdutoAPI() {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            const n = Math.floor(Math.random() * 100);
+            if (n % 2 === 0) {
+              const itens = [
+                { id: 1, nome: "arroz", tipo: "alimento", preco: 5.0 },
+                { id: 2, nome: "feijao", tipo: "alimento", preco: 6.0 },
+                { id: 3, nome: "milho", tipo: "alimento", preco: 2.5 },
+                { id: 4, nome: "talheres", tipo: "utensilio", preco: 14.0 },
+                { id: 5, nome: "lapis", tipo: "escritorio", preco: 1.0 },
+                { id: 6, nome: "lapiseira", tipo: "escritorio", preco: 23.0 },
+                { id: 7, nome: "caneta", tipo: "escritorio", preco: 3.4 },
+                { id: 8, nome: "café", tipo: "alimento", preco: 50.25 },
+                { id: 9, nome: "leite", tipo: "alimento", preco: 5.0 },
+                { id: 10, nome: "arroz", tipo: "alimento", preco: 5.0 },
+              ];
+              resolve(itens);
+            } else {
+              reject({ res: "ERROR", msg: "ERRO NO SISTEMA" });
+            }
+          }, 4000);
+        });
+      }
+
+      async function carregarProdutos() {
+        const container = document.getElementById("container");
+        try {
+          const produtos = await buscarProdutoAPI();
+          let precoTotal = 0;
+          let maisCaro = produtos[0];
+          let maisBarato = produtos[0];
+
+          for (const produto of produtos) {
+            precoTotal += produto.preco;
+
+            if (produto.preco > maisCaro.preco) {
+              maisCaro = produto;
+            }
+            if (produto.preco < maisBarato.preco) {
+              maisBarato = produto;
+            }
+
+            const media = precoTotal / produtos.length;
+
+            let tabelaHTML = `
+                      <h2>Produtos</h2>
+                      <p>Preço Médio: R$ ${media}</p>
+                      <p>Produto mais caro: ${maisCaro.nome}</p>
+                      <p>Produto mais barato: ${maisBarato.nome}</p>
+                      <table border="1", style="width:100%; border-collapse:colapse">
+                          <thead>
+                              <tr>
+                                  <th>ID</th>
+                                  <th>Nome</th>
+                                  <th>Preço</th>
+                          </thead>
+                          <tbody>
+                    `;
+
+            for (const produto of produtos) {
+              let destaque = "";
+              if (produto.id === maisCaro.id || produto.id === maisBarato.id) {
+                destaque = "background-color: green";
+              } else if (produto.preco > media) {
+                destaque = "background-color: yellow";
+              }
+
+              tabelaHTML += `
+                          <tr style="${destaque}">
+                              <td>${produto.id}</td>
+                              <td>${produto.nome}</td>
+                              <td>${produto.preco.toFixed(2)}</td>
+                          </tr>
+                      `;
+            }
+            tabelaHTML += `</tbody></table>`;
+
+            container.innerHTML = tabelaHTML;
+          }
+        } catch (error) {
+          console.log(error);
+          container.textContent = error.msg;
+        }
+      }
+
+      carregarProdutos();
+    </script>
+  </body>
+</html>
